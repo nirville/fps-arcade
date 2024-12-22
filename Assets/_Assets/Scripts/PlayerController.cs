@@ -2,12 +2,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Transform playerBody;
+    public Transform playerAim;
     
     [SerializeField] float aimSensitivity = 10f;
     [SerializeField] float moveSpeed = 2f;
     [SerializeField] float jumpHeight = 2f;
     [SerializeField] float gravity = -9.81f;
+
+    public bool hasWeapon = false;
+    public Transform playerBody;
+    public Animator animator;
 
     CharacterController characterController;
 
@@ -37,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
         //Debug.Log(Mathf.Abs(rotX));
         if(Mathf.Abs(rotX) < 45)
-            playerBody.localEulerAngles = new Vector3(rotX, rotY, 0);
+            playerAim.localEulerAngles = new Vector3(rotX, rotY, 0);
         else
             rotX = Mathf.Sign(rotX) * 44.9f; // Reset rotX to just below 45
 
@@ -46,9 +50,9 @@ public class PlayerController : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
         float moveZ = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
 
-        var dir = playerBody.forward;
+        var dir = playerAim.forward;
         dir.y = 0;
-        Vector3 move = playerBody.right * moveX + dir * moveZ;
+        Vector3 move = playerAim.right * moveX + dir * moveZ;
         
         //transform.Translate(move);
 

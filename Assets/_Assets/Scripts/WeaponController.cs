@@ -5,24 +5,40 @@ public class WeaponController : MonoBehaviour
     public GameObject projectilePrefab;
     public Transform firePoint;
     public float projectileSpeed = 20f;
+    public Transform axeGrabPoint;
+
+    PlayerController player;
+
+    void Start() {
+        player = GetComponent<PlayerController>();
+    }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetKeyDown(KeyCode.F) && player.hasWeapon)
         {
             Shoot();
+        }
+        if(Input.GetKeyDown(KeyCode.E) && !player.hasWeapon)
+        {
+            player.hasWeapon = true;
+            projectilePrefab.transform.parent = player.playerBody;
+            projectilePrefab.GetComponent<Rotator>().shouldRotate = false;
+            projectilePrefab.transform.position = axeGrabPoint.position;
+            projectilePrefab.transform.rotation = axeGrabPoint.rotation;
+            projectilePrefab.GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 
     void Shoot()
     {
-        // Instantiate the projectile at the fire point
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        player.animator.Play("throw_weapon");
+        projectilePrefab.GetComponent<Rotator>().shouldRotate = true;
 
-        // Get the center of the screen
+        projectilePrefab.transform.parent = null;
+        GameObject projectile = projectilePrefab;
+
         Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-        
-        // Convert screen center to a world point
         Ray ray = Camera.main.ScreenPointToRay(screenCenter);
         RaycastHit hit;
         Vector3 targetPoint;
@@ -33,14 +49,15 @@ public class WeaponController : MonoBehaviour
         }
         else
         {
-            targetPoint = ray.GetPoint(1000); // Arbitrary large distance
+            targetPoint = ray.GetPoint(1000);
         }
 
-        // Calculate the direction to the target point
         Vector3 direction = (targetPoint - firePoint.position).normalized;
 
-        // Apply velocity to the projectile
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
         rb.velocity = direction * projectileSpeed;
+
+        player.hasWeapon = false;
     }
 }
