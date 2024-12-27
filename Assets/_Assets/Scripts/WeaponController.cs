@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WeaponController : MonoBehaviour
+public class WeaponController : MonoBehaviour, IAttack
 {
     public GameObject projectilePrefab;
     public Transform firePoint;
@@ -17,7 +17,7 @@ public class WeaponController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F) && player.hasWeapon)
         {
-            Shoot();
+            Attack();
         }
         if(Input.GetKeyDown(KeyCode.E) && !player.hasWeapon)
         {
@@ -30,7 +30,7 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    void Shoot()
+    public void Attack()
     {
         player.animator.Play("throw_weapon");
         projectilePrefab.GetComponent<Rotator>().shouldRotate = true;
@@ -60,4 +60,5 @@ public class WeaponController : MonoBehaviour
 
         player.hasWeapon = false;
     }
+
 }

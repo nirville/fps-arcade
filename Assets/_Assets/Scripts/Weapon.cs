@@ -5,8 +5,13 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     void OnCollisionEnter(Collision other) {
-        Debug.Log("Collided with " + other.gameObject.name);
-        gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        var body = gameObject.GetComponent<Rigidbody>();
+        body.isKinematic = true;
         gameObject.GetComponent<Rotator>().shouldRotate = false;
+
+        if(other.gameObject.CompareTag("Enemy")) {
+            other.gameObject.GetComponent<EnemyController>().Die();
+            body.isKinematic = false;
+        }
     }
 }
